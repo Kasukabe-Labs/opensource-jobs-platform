@@ -20,22 +20,24 @@ export const insertJobs = async ({
   location,
   description,
   logoUrl,
-  tags,
   websiteUrl,
   created_at,
   updated_at,
 }: Company): Promise<void> => {
   const query = `
-        INSERT INTO companies (name, location, description, logo_url, tags, website_url, created_at, updated_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-        ON CONFLICT (name) DO NOTHING
+        INSERT INTO companies (companyName,
+    location,
+    description,
+    logoUrl,
+    websiteUrl, created_at, updated_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        ON CONFLICT (websiteUrl) DO NOTHING
     `;
   const values = [
     companyName,
     location,
     description,
     logoUrl,
-    tags,
     websiteUrl,
     created_at || new Date(),
     updated_at || new Date(),

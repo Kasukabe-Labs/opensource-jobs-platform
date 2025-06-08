@@ -1,4 +1,5 @@
 import puppeteer from "puppeteer";
+import { insertJobs } from "../utils/database";
 
 const url =
   "https://www.ycombinator.com/companies?regions=Fully%20Remote&regions=India";
@@ -17,7 +18,7 @@ export const scrapeYcCompanies = async () => {
 
   let previousHeight;
 
-  for (let i = 0; i < 15; i++) {
+  for (let i = 0; i < 100; i++) {
     previousHeight = await page.evaluate("document.body.scrollHeight");
     await page.evaluate("window.scrollTo(0, document.body.scrollHeight)");
     await new Promise((res) => setTimeout(res, 3000));
@@ -38,28 +39,45 @@ export const scrapeYcCompanies = async () => {
       const description = el
         .querySelector("._coDescription_i9oky_495")
         ?.textContent?.trim();
+
+      const logoUrl = el.querySelector("img")?.src;
       const location = el
         .querySelector("._coLocation_i9oky_486")
         ?.textContent?.trim();
-      const website = el.querySelector("a")?.href;
+      const website = (el as HTMLAnchorElement).href;
 
       return {
         name,
         description,
         location,
+        logoUrl,
         website,
       };
     });
   });
 
-  companies.forEach(({ name, description, location, website }) => {
+  companies.forEach(({ name, description, logoUrl, location, website }) => {
     console.log(`Company: ${name}`);
     console.log(`Description: ${description}`);
+    console.log(`LogoU url: ${logoUrl}`);
     console.log(`Location: ${location}`);
     console.log(`Website: ${website}`);
     console.log("-----------------------------");
   });
   console.log(`Total companies scraped: ${companies.length}`);
+
+  for (const company of companies) {
+    await insertJobs({
+      companyName: company.name!,
+      location: company.location!,
+      description: company.description!,
+      logoUrl: company.logoUrl!,
+      websiteUrl: company.website!,
+      created_at: new Date(),
+      updated_at: new Date(),
+    });
+    console.log(`Inserted company: ${company.name} to database`);
+  }
 
   await browser.close();
 };
