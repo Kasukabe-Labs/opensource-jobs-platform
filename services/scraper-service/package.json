@@ -1,0 +1,27 @@
+{
+  "name": "scraper-service",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc --build",
+    "start": "node dist/index.js",
+    "dev": "npm run build && npm run start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.5.0",
+    "pg": "^8.16.0",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.9.36",
+    "@types/pg": "^8.15.4",
+    "@types/puppeteer": "^5.4.7",
+    "axios": "^1.9.0",
+    "puppeteer": "^24.10.0"
+  }
+}

@@ -3,3 +3,6 @@
 /services/api-service/.env
 /services/api-service/.env.local
 /services/db-service/docker-compose.yml
+/services/scraper-service/node_modules
+/services/scraper-service/dist
+/services/scraper-service/.env

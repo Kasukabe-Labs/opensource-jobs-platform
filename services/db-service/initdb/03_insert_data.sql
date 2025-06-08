@@ -1,37 +1,37 @@
-INSERT INTO jobs(
-    title, location, description, salary, category,
-    company, companyWebsite, companyLogo,
-    jobUrl, postedAt, scrapedAt, created_at, updated_at
-) VALUES(
-    'Software Engineer', 'New York, NY', 
-    'We are looking for a Software Engineer to join our team.', 
-    120000, 'Engineering', 
-    'Tech Corp', 'https://techcorp.com', 
-    'https://techcorp.com/logo.png', 
-    'https://techcorp.com/jobs/12345', 
-    '2023-10-01', NOW(), NOW(), NOW()
-),(
-    'Data Scientist', 'San Francisco, CA', 
-    'Join us as a Data Scientist to analyze data and provide insights.', 
-    130000, 'Data Science', 
-    'Data Solutions', 'https://datasolutions.com', 
-    'https://datasolutions.com/logo.png', 
-    'https://datasolutions.com/jobs/67890', 
-    '2023-10-02', NOW(), NOW(), NOW()
-),(
-    'Product Manager', 'Austin, TX', 
-    'Seeking a Product Manager to lead product development.', 
-    140000, 'Product Management', 
-    'Innovate Inc.', 'https://innovateinc.com', 
-    'https://innovateinc.com/logo.png', 
-    'https://innovateinc.com/jobs/11223', 
-    '2023-10-03', NOW(), NOW(), NOW()
-),(
-    'UX Designer', 'Seattle, WA', 
-    'We need a UX Designer to enhance user experience.', 
-    110000, 'Design', 
-    'Creative Agency', 'https://creativeagency.com', 
-    'https://creativeagency.com/logo.png', 
-    'https://creativeagency.com/jobs/44556', 
-    '2023-10-04', NOW(), NOW(), NOW()
-);
+-- INSERT INTO jobs(
+--     title, location, description, salary, category,
+--     company, companyWebsite, companyLogo,
+--     jobUrl, postedAt, scrapedAt, created_at, updated_at
+-- ) VALUES(
+--     'Software Engineer', 'New York, NY', 
+--     'We are looking for a Software Engineer to join our team.', 
+--     120000, 'Engineering', 
+--     'Tech Corp', 'https://techcorp.com', 
+--     'https://techcorp.com/logo.png', 
+--     'https://techcorp.com/jobs/12345', 
+--     '2023-10-01', NOW(), NOW(), NOW()
+-- ),(
+--     'Data Scientist', 'San Francisco, CA', 
+--     'Join us as a Data Scientist to analyze data and provide insights.', 
+--     130000, 'Data Science', 
+--     'Data Solutions', 'https://datasolutions.com', 
+--     'https://datasolutions.com/logo.png', 
+--     'https://datasolutions.com/jobs/67890', 
+--     '2023-10-02', NOW(), NOW(), NOW()
+-- ),(
+--     'Product Manager', 'Austin, TX', 
+--     'Seeking a Product Manager to lead product development.', 
+--     140000, 'Product Management', 
+--     'Innovate Inc.', 'https://innovateinc.com', 
+--     'https://innovateinc.com/logo.png', 
+--     'https://innovateinc.com/jobs/11223', 
+--     '2023-10-03', NOW(), NOW(), NOW()
+-- ),(
+--     'UX Designer', 'Seattle, WA', 
+--     'We need a UX Designer to enhance user experience.', 
+--     110000, 'Design', 
+--     'Creative Agency', 'https://creativeagency.com', 
+--     'https://creativeagency.com/logo.png', 
+--     'https://creativeagency.com/jobs/44556', 
+--     '2023-10-04', NOW(), NOW(), NOW()
+-- );

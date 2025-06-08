@@ -1,0 +1,15 @@
+export interface Job{
+    title:string,
+    location:string, 
+    description:string, 
+    salary:number, 
+    category:string,
+    company:string, 
+    companyWebsite:string, 
+    companyLogo:string,
+    jobUrl:string, 
+    postedAt:string, 
+    scrapedAt:Date, 
+    created_at:Date, 
+    updated_at:Date,
+}
