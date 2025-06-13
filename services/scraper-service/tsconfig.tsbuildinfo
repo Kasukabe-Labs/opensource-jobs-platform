@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/scrapers/ycScrapper.ts","./src/types/company.ts","./src/types/job.ts","./src/utils/database.ts"],"version":"5.8.3"}
+{"root":["./src/index.ts","./src/scraperConfigs/WeWorkRemotely.ts","./src/scraperConfigs/Ycombinator.ts","./src/types/company.ts","./src/types/job.ts","./src/utils/baseScraper.ts","./src/utils/database.ts"],"version":"5.8.3"}
