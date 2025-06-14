@@ -5,6 +5,8 @@ export const getCompanies = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
+  reply.header("cache-control", "public, max-age=600");
+
   const { cursor, limit } = request.query as {
     cursor?: string;
     limit?: string;

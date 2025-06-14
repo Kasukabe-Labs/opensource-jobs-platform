@@ -1,7 +1,9 @@
 import Fastify, { fastify } from "fastify";
 import rateLimit from "@fastify/rate-limit";
+import caching, { fastifyCaching } from "@fastify/caching";
 import cors from "@fastify/cors";
 import { companyRoutes } from "./routes/companyRoutes";
+import { FilterRoute, SearchRoute } from "./routes/searchAndFilter";
 
 const server = Fastify({
   logger: true,
@@ -18,8 +20,15 @@ const start = async () => {
       timeWindow: "1 minute",
     });
 
+    await server.register(caching, {
+      privacy: fastifyCaching.privacy.PUBLIC,
+      expiresIn: 360000,
+    });
+
     // Register routes
     await server.register(companyRoutes);
+    await server.register(SearchRoute);
+    await server.register(FilterRoute);
 
     // Base route
     server.get("/", async (request, reply) => {

@@ -1,40 +1,79 @@
-import { useEffect, useState, useRef, useCallback } from "react";
-
-interface Company {
-  id: string;
-  companyname: string;
-  location: string;
-  description: string;
-  logourl: string;
-  websiteurl: string;
-  created_at: string;
-  updated_at: string;
-}
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
+import type { Company } from "./types/Company";
+import type { SearchFilters } from "./types/SearchFIlters";
+import { useDebounce } from "./hooks/useDebouce";
+import { SearchBar } from "./components/SearchBar";
+import { CompanyCard } from "./components/CompanyCard";
 
 function App() {
+  const API_BASE = "http://127.0.0.1:8001";
+
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [locations, setLocations] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [cursor, setCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
+  const [filters, setFilters] = useState<SearchFilters>({
+    search: "",
+    location: "",
+  });
 
-  const fetchJobs = useCallback(async (currentCursor: string | null = null) => {
-    setLoading(true);
-    const url = currentCursor
-      ? `/companies?limit=20&cursor=${encodeURIComponent(currentCursor)}`
-      : `/companies?limit=20`;
+  const debouncedSearch = useDebounce(filters.search, 300);
 
+  const fetchCompanies = useCallback(
+    async (
+      resetList = false,
+      currentCursor: string | null = null,
+      searchTerm = "",
+      locationFilter = ""
+    ) => {
+      setLoading(true);
+
+      try {
+        const params = new URLSearchParams({
+          limit: "20",
+          ...(currentCursor && { cursor: currentCursor }),
+          ...(searchTerm.trim() && { search: searchTerm.trim() }),
+          ...(locationFilter.trim() && { location: locationFilter.trim() }),
+        });
+
+        const res = await fetch(`${API_BASE}/search?${params}`);
+        const data = await res.json();
+
+        setCompanies((prev) =>
+          resetList ? data.companiesData : [...prev, ...data.companiesData]
+        );
+        setCursor(data.nextCursor);
+        setHasMore(data.hasMore);
+      } catch (error) {
+        console.error("Error fetching companies:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [API_BASE]
+  );
+
+  const fetchLocations = useCallback(async () => {
     try {
-      const res = await fetch(`http://127.0.0.1:8001${url}`);
+      const res = await fetch(`${API_BASE}/locations`);
       const data = await res.json();
-
-      setCompanies((prev) => [...prev, ...data?.companiesData]);
-      setCursor(data?.nextCursor);
-      setHasMore(data?.companiesData?.length > 0);
+      setLocations(data.locations);
     } catch (error) {
-      console.error("Error fetching companies:", error);
-    } finally {
-      setLoading(false);
+      console.error("Error fetching locations:", error);
     }
+  }, [API_BASE]);
+
+  useEffect(() => {
+    setCursor(null);
+    setHasMore(true);
+    fetchCompanies(true, null, debouncedSearch, filters.location);
+  }, [debouncedSearch, filters.location, fetchCompanies]);
+
+  // Initial load
+  useEffect(() => {
+    fetchCompanies(true);
+    fetchLocations();
   }, []);
 
   const observer = useRef<IntersectionObserver | null>(null);
@@ -45,18 +84,43 @@ function App() {
 
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore) {
-          fetchJobs(cursor);
+          fetchCompanies(false, cursor, debouncedSearch, filters.location);
         }
       });
 
       if (node) observer.current.observe(node);
     },
-    [loading, hasMore, cursor, fetchJobs]
+    [
+      loading,
+      hasMore,
+      cursor,
+      debouncedSearch,
+      filters.location,
+      fetchCompanies,
+    ]
   );
 
-  useEffect(() => {
-    fetchJobs();
-  }, [fetchJobs]);
+  const handleSearchChange = useCallback((search: string) => {
+    setFilters((prev) => ({ ...prev, search }));
+  }, []);
+
+  const handleLocationChange = useCallback((location: string) => {
+    setFilters((prev) => ({ ...prev, location }));
+  }, []);
+
+  const resultsInfo = useMemo(() => {
+    const hasFilters = filters.search || filters.location;
+    const filterText = [];
+
+    if (filters.search) filterText.push(`"${filters.search}"`);
+    if (filters.location) filterText.push(`in ${filters.location}`);
+
+    return hasFilters
+      ? `Showing results for ${filterText.join(" ")} • ${
+          companies.length
+        } companies found`
+      : `${companies.length} companies`;
+  }, [filters, companies.length]);
 
   return (
     <div className="min-h-screen bg-zinc-100 p-6 font-sans text-zinc-800">
@@ -65,36 +129,50 @@ function App() {
           Remote -- OSS Companies
         </h1>
 
-        {companies?.map((company, index) => (
-          <a
-            href={company.websiteurl}
-            target="_blank"
-            rel="noopener noreferrer"
-            key={`${company.id}-${index}`}
-            ref={index === companies.length - 1 ? lastCompanyRef : null}
-            className="flex gap-4 items-start bg-white p-4 rounded-2xl shadow-sm hover:shadow-md transition duration-200"
-          >
-            <img
-              src={company.logourl}
-              alt={company.companyname}
-              className="w-16 h-16 object-contain rounded-lg bg-gray-50"
+        <SearchBar
+          onSearchChange={handleSearchChange}
+          onLocationChange={handleLocationChange}
+          filters={filters}
+          locations={locations}
+        />
+
+        <div className="mb-4">
+          <p className="text-sm text-gray-600">{resultsInfo}</p>
+        </div>
+
+        <div className="space-y-6">
+          {companies.map((company, index) => (
+            <CompanyCard
+              key={company.id}
+              company={company}
+              isLast={index === companies.length - 1}
+              ref={index === companies.length - 1 ? lastCompanyRef : undefined}
             />
-            <div className="flex flex-col">
-              <h2 className="text-lg font-semibold">{company.companyname}</h2>
-              <p className="text-sm text-gray-600">{company.location}</p>
-              <p className="text-sm mt-1 line-clamp-3">{company.description}</p>
-              <p className="text-xs text-gray-400 mt-2">
-                Joined: {new Date(company.created_at).toLocaleDateString()}
-              </p>
-            </div>
-          </a>
-        ))}
+          ))}
+        </div>
 
         {loading && (
-          <p className="text-center text-gray-500">Loading more companies...</p>
+          <div className="text-center py-8">
+            <div className="inline-flex items-center space-x-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+              <span className="text-gray-500">Loading companies...</span>
+            </div>
+          </div>
         )}
-        {!hasMore && (
-          <p className="text-center text-gray-400">You've reached the end.</p>
+
+        {!hasMore && companies.length > 0 && (
+          <p className="text-center text-gray-400 py-8">
+            You've reached the end.
+          </p>
+        )}
+
+        {!loading && companies.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">No companies found</p>
+            <p className="text-gray-400 text-sm mt-2">
+              Try adjusting your search or filters
+            </p>
+          </div>
         )}
       </div>
     </div>
