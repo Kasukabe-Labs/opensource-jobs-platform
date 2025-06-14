@@ -4,7 +4,7 @@ import { scrapeCompanies } from "./utils/baseScraper";
 
 (async () => {
   try {
-    await scrapeCompanies(ycombinatorConfig);
+    await scrapeCompanies(weWorkRemotelyConfig);
     console.log("✅ Scraping done");
   } catch (err) {
     console.error("❌ Scraping failed", err);

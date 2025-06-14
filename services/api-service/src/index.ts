@@ -1,6 +1,6 @@
-import Fastify from "fastify";
+import Fastify, { fastify } from "fastify";
 import rateLimit from "@fastify/rate-limit";
-import caching, { fastifyCaching } from "@fastify/caching";
+import cors from "@fastify/cors";
 import { companyRoutes } from "./routes/companyRoutes";
 
 const server = Fastify({
@@ -9,6 +9,9 @@ const server = Fastify({
 
 const start = async () => {
   try {
+    await server.register(cors, {
+      origin: "*",
+    });
     // Register rate limiting
     await server.register(rateLimit, {
       max: 100,

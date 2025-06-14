@@ -1,4 +1,4 @@
-import { FlexibleScraperProps } from "../utils/baseScraper";
+import { FlexibleScraperProps } from "../types/scraper";
 
 export const weWorkRemotelyConfig: FlexibleScraperProps = {
   url: "https://weworkremotely.com/top-remote-companies",

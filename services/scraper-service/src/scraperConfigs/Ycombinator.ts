@@ -1,4 +1,4 @@
-import { FlexibleScraperProps } from "../utils/baseScraper";
+import { FlexibleScraperProps } from "../types/scraper";
 
 export const ycombinatorConfig: FlexibleScraperProps = {
   url: "https://www.ycombinator.com/companies?regions=Fully%20Remote&regions=India",

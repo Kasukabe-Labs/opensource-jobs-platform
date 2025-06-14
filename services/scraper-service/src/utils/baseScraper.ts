@@ -1,22 +1,10 @@
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-extra";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
 
 import { insertJobs } from "../utils/database";
+import { FlexibleScraperProps } from "../types/scraper";
 
-interface ScraperSelector {
-  selector: string;
-  attribute?: string; // For getting attributes like 'src', 'href', etc.
-  fallbackSelectors?: string[]; // Alternative selectors to try
-}
-
-export interface FlexibleScraperProps {
-  url: string;
-  parentSelector: string;
-  companyNameSelector: ScraperSelector;
-  companyDescriptionSelector: ScraperSelector;
-  companyLogoUrlSelector: ScraperSelector;
-  companyLocationSelector: ScraperSelector;
-  websiteSelector: ScraperSelector;
-}
+puppeteer.use(StealthPlugin());
 
 export const scrapeCompanies = async ({
   url,
@@ -33,8 +21,13 @@ export const scrapeCompanies = async ({
   });
 
   const page = await browser.newPage();
+  await page.setUserAgent(
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+  );
+
   await page.goto(url, {
     waitUntil: "networkidle2",
+    timeout: 60000,
   });
 
   // Infinite scroll handling
