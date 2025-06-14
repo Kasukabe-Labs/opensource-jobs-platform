@@ -40,7 +40,7 @@ const start = async () => {
 
     const PORT = process.env.PORT || 8001;
 
-    await server.listen({ port: PORT as number });
+    await server.listen({ port: Number(PORT), host: "0.0.0.0" });
     server.log.info(`Server is running on port ${PORT}`);
   } catch (err) {
     server.log.error(err);

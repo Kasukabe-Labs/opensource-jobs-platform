@@ -6,7 +6,7 @@ import { SearchBar } from "./components/SearchBar";
 import { CompanyCard } from "./components/CompanyCard";
 
 function App() {
-  const API_BASE = process.env.SERVER_URL;
+  const API_BASE = import.meta.env.VITE_API_URL;
 
   const [companies, setCompanies] = useState<Company[]>([]);
   const [locations, setLocations] = useState<string[]>([]);
