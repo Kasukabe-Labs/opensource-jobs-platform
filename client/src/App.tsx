@@ -6,7 +6,7 @@ import { SearchBar } from "./components/SearchBar";
 import { CompanyCard } from "./components/CompanyCard";
 
 function App() {
-  const API_BASE = "http://127.0.0.1:8000";
+  const API_BASE = process.env.SERVER_URL;
 
   const [companies, setCompanies] = useState<Company[]>([]);
   const [locations, setLocations] = useState<string[]>([]);
