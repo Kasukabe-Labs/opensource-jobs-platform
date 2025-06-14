@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import Fastify, { fastify } from "fastify";
 import rateLimit from "@fastify/rate-limit";
 import caching, { fastifyCaching } from "@fastify/caching";
@@ -14,7 +17,7 @@ const start = async () => {
     await server.register(cors, {
       origin: "*",
     });
-    // Register rate limiting
+
     await server.register(rateLimit, {
       max: 100,
       timeWindow: "1 minute",

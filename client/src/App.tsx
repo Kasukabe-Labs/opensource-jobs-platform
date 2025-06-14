@@ -6,7 +6,7 @@ import { SearchBar } from "./components/SearchBar";
 import { CompanyCard } from "./components/CompanyCard";
 
 function App() {
-  const API_BASE = "http://127.0.0.1:8001";
+  const API_BASE = "http://127.0.0.1:8000";
 
   const [companies, setCompanies] = useState<Company[]>([]);
   const [locations, setLocations] = useState<string[]>([]);
@@ -124,9 +124,9 @@ function App() {
 
   return (
     <div className="min-h-screen bg-zinc-100 p-6 font-sans text-zinc-800">
-      <div className="max-w-3xl mx-auto space-y-6">
+      <div className="max-w-3xl mx-auto space-y-6 mt-12">
         <h1 className="text-3xl font-bold text-center mb-4">
-          Remote -- OSS Companies
+          Remote OSS Companies Finder
         </h1>
 
         <SearchBar
