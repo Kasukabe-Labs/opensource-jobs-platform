@@ -6,6 +6,8 @@
     "@fastify/rate-limit": "^10.3.0",
     "dotenv": "^16.5.0",
     "fastify": "^5.4.0",
+    "@types/node": "^22.15.31",
+    "@types/pg": "^8.15.4",
     "pg": "^8.16.0"
   },
   "scripts": {
@@ -14,8 +16,6 @@
     "dev": "npm run build && npm run start"
   },
   "devDependencies": {
-    "@types/node": "^22.15.31",
-    "@types/pg": "^8.15.4",
     "typescript": "^5.8.3"
   }
 }
