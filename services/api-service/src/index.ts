@@ -7,6 +7,8 @@ import caching, { fastifyCaching } from "@fastify/caching";
 import cors from "@fastify/cors";
 import { companyRoutes } from "./routes/companyRoutes";
 import { FilterRoute, SearchRoute } from "./routes/searchAndFilter";
+import fastifyCookie from "@fastify/cookie";
+import { authRedirectRoute, callbackRoute } from "./routes/authRoutes";
 
 const server = Fastify({
   logger: true,
@@ -28,11 +30,14 @@ const start = async () => {
       expiresIn: 360000,
     });
 
+    await server.register(fastifyCookie);
+
     // Register routes
     await server.register(companyRoutes);
     await server.register(SearchRoute);
     await server.register(FilterRoute);
-
+    await server.register(authRedirectRoute);
+    await server.register(callbackRoute);
     // Base route
     server.get("/", async (request, reply) => {
       reply.send({ message: "base route working..." });
