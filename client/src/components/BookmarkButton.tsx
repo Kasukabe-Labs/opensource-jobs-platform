@@ -17,19 +17,33 @@ export const BookmarkButton = ({
     setLoading(true);
 
     try {
-      const method = bookmarked ? "DELETE" : "POST";
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/bookmarks/${companyId}`,
-        {
-          method,
-          credentials: "include",
-        }
-      );
+      if (bookmarked) {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/bookmarks/${companyId}`,
+          {
+            method: "DELETE",
+            credentials: "include",
+          }
+        );
 
-      if (res.ok) {
-        const newState = !bookmarked;
-        setBookmarked(newState);
-        onToggle(companyId, newState);
+        if (res.ok) {
+          setBookmarked(false);
+          onToggle(companyId, false);
+        }
+      } else {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/bookmarks`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ companyId }),
+        });
+
+        if (res.ok) {
+          setBookmarked(true);
+          onToggle(companyId, true);
+        }
       }
     } catch (err) {
       console.error("Bookmark error:", err);

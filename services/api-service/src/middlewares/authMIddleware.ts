@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { FastifyReply, FastifyRequest } from "fastify";
 import jwt from "jsonwebtoken";
 

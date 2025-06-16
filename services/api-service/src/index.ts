@@ -18,7 +18,8 @@ const server = Fastify({
 const start = async () => {
   try {
     await server.register(cors, {
-      origin: "*",
+      origin: process.env.CLIENT_URL,
+      credentials: true,
     });
 
     await server.register(rateLimit, {

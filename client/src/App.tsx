@@ -9,6 +9,7 @@ function App() {
   const API_BASE = import.meta.env.VITE_API_URL;
 
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(new Set());
   const [locations, setLocations] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [cursor, setCursor] = useState<string | null>(null);
@@ -19,6 +20,26 @@ function App() {
   });
 
   const debouncedSearch = useDebounce(filters.search, 300);
+
+  const fetchBookmarks = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/bookmarks`, {
+        credentials: "include",
+      });
+      const data = await res.json();
+      setBookmarkedIds(new Set(data.bookmarkedCompanyIds)); // expecting: string[]
+    } catch (error) {
+      console.error("Failed to fetch bookmarks", error);
+    }
+  };
+
+  const handleBookmarkToggle = (id: string, state: boolean) => {
+    setBookmarkedIds((prev) => {
+      const updated = new Set(prev);
+      state ? updated.add(id) : updated.delete(id);
+      return updated;
+    });
+  };
 
   const fetchCompanies = useCallback(
     async (
@@ -74,11 +95,12 @@ function App() {
   useEffect(() => {
     fetchCompanies(true);
     fetchLocations();
+    fetchBookmarks();
   }, []);
 
   const observer = useRef<IntersectionObserver | null>(null);
   const lastCompanyRef = useCallback(
-    (node: HTMLAnchorElement | null) => {
+    (node: HTMLDivElement | null) => {
       if (loading) return;
       if (observer.current) observer.current.disconnect();
 
@@ -147,6 +169,8 @@ function App() {
               company={company}
               isLast={index === companies.length - 1}
               ref={index === companies.length - 1 ? lastCompanyRef : undefined}
+              isBookmarked={bookmarkedIds.has(company.id)}
+              onBookmarkToggle={handleBookmarkToggle}
             />
           ))}
         </div>
