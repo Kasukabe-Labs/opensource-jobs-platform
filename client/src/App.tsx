@@ -25,7 +25,7 @@ function App() {
   });
   const [showLoginDialog, setShowLoginDialog] = useState(false);
 
-  const { user, loading: authLoading, checkAuth } = useAuth();
+  const { user, checkAuth } = useAuth();
   const debouncedSearch = useDebounce(filters.search, 300);
 
   const fetchBookmarks = async () => {
