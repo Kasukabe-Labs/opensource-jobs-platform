@@ -9,6 +9,7 @@ import { companyRoutes } from "./routes/companyRoutes";
 import { FilterRoute, SearchRoute } from "./routes/searchAndFilter";
 import fastifyCookie from "@fastify/cookie";
 import { authRedirectRoute, callbackRoute } from "./routes/authRoutes";
+import { bookmarkRoutes } from "./routes/bookmarkRoutes";
 
 const server = Fastify({
   logger: true,
@@ -38,6 +39,9 @@ const start = async () => {
     await server.register(FilterRoute);
     await server.register(authRedirectRoute);
     await server.register(callbackRoute);
+    await server.register(bookmarkRoutes);
+
+    server.printRoutes();
     // Base route
     server.get("/", async (request, reply) => {
       reply.send({ message: "base route working..." });

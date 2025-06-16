@@ -58,26 +58,21 @@ export const googleAuthCallback = async (
       const refreshToken = generateRefreshToken(user.id);
       const accessToken = generateAccessToken(user.id);
 
-      sendToken({
-        res: reply,
-        accessToken,
-        refreshToken,
-      });
+      sendToken(reply, accessToken, refreshToken);
 
-      // send redirect
       reply.header("Content-Type", "text/html").send(`
-        <html>
-          <head>
-            <meta http-equiv="refresh" content="0; URL='${process.env.CLIENT_URL}'" />
-            <script>
-              window.location.href = '${process.env.CLIENT_URL}';
-            </script>
-          </head>
-          <body>
-            Redirecting...
-          </body>
-        </html>
-      `);
+  <html>
+    <head>
+      <meta http-equiv="refresh" content="0; URL='${process.env.CLIENT_URL}'" />
+      <script>
+        window.location.href = '${process.env.CLIENT_URL}';
+      </script>
+    </head>
+    <body>
+      Redirecting...
+    </body>
+  </html>
+`);
     } finally {
       client.release();
     }
