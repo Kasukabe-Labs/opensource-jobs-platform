@@ -4,6 +4,7 @@ import type { SearchFilters } from "./types/SearchFIlters";
 import { useDebounce } from "./hooks/useDebouce";
 import { SearchBar } from "./components/SearchBar";
 import { CompanyCard } from "./components/CompanyCard";
+import axios from "axios";
 
 function App() {
   const API_BASE = import.meta.env.VITE_API_URL;
@@ -23,11 +24,10 @@ function App() {
 
   const fetchBookmarks = async () => {
     try {
-      const res = await fetch(`${API_BASE}/bookmarks`, {
-        credentials: "include",
+      const res = await axios.get(`${API_BASE}/bookmarks`, {
+        withCredentials: true,
       });
-      const data = await res.json();
-      setBookmarkedIds(new Set(data.bookmarkedCompanyIds)); // expecting: string[]
+      setBookmarkedIds(new Set(res.data.bookmarkedCompanyIds)); // expecting: string[]
     } catch (error) {
       console.error("Failed to fetch bookmarks", error);
     }

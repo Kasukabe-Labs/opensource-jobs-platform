@@ -13,13 +13,11 @@ export async function authMiddleware(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
-  const token =
-    (request.headers["refreshtoken"] as string) ||
-    request.cookies?.refreshToken;
+  const token = request.cookies?.refreshToken;
 
   if (!token) {
     return reply.status(401).send({
-      message: "Unauthorized access",
+      message: "Unauthorized access blah blah blah",
     });
   }
 

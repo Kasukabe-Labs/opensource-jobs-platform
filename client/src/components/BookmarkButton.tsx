@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios";
 
 export const BookmarkButton = ({
   companyId,
@@ -18,32 +19,27 @@ export const BookmarkButton = ({
 
     try {
       if (bookmarked) {
-        const res = await fetch(
+        await axios.delete(
           `${import.meta.env.VITE_API_URL}/bookmarks/${companyId}`,
           {
-            method: "DELETE",
-            credentials: "include",
+            withCredentials: true,
           }
         );
-
-        if (res.ok) {
-          setBookmarked(false);
-          onToggle(companyId, false);
-        }
+        setBookmarked(false);
+        onToggle(companyId, false);
       } else {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/bookmarks`, {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ companyId }),
-        });
-
-        if (res.ok) {
-          setBookmarked(true);
-          onToggle(companyId, true);
-        }
+        await axios.post(
+          `${import.meta.env.VITE_API_URL}/bookmarks`,
+          { companyId },
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        setBookmarked(true);
+        onToggle(companyId, true);
       }
     } catch (err) {
       console.error("Bookmark error:", err);
