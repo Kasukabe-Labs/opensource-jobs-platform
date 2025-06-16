@@ -67,7 +67,7 @@ const start = async () => {
 
     await server.listen({
       port: Number(PORT),
-      host: "localhost",
+      host: "0.0.0.0", // This accepts connections from any IP
     });
 
     server.log.info(`Server is running on port ${PORT}`);
