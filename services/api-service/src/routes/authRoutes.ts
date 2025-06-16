@@ -5,9 +5,9 @@ import {
 } from "../controller/authController";
 
 export const authRedirectRoute = async (fastify: FastifyInstance) => {
-  fastify.get("/google", googleAuthRedirect);
+  fastify.get("/auth/google", googleAuthRedirect);
 };
 
 export const callbackRoute = async (fastify: FastifyInstance) => {
-  fastify.get("/google-callback", googleAuthCallback);
+  fastify.get("/auth/google/callback", googleAuthCallback);
 };
