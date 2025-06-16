@@ -8,7 +8,7 @@ import cors from "@fastify/cors";
 import { companyRoutes } from "./routes/companyRoutes";
 import { FilterRoute, SearchRoute } from "./routes/searchAndFilter";
 import fastifyCookie from "@fastify/cookie";
-import { authRedirectRoute, callbackRoute } from "./routes/authRoutes";
+import { authRedirectRoute, callbackRoute, meRoute } from "./routes/authRoutes";
 import { bookmarkRoutes } from "./routes/bookmarkRoutes";
 
 const server = Fastify({
@@ -56,6 +56,7 @@ const start = async () => {
     await server.register(authRedirectRoute);
     await server.register(callbackRoute);
     await server.register(bookmarkRoutes);
+    await server.register(meRoute);
 
     server.get("/", async (request, reply) => {
       reply.send({ message: "base route working..." });

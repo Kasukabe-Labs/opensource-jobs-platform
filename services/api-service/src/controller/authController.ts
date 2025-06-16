@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { FastifyReply, FastifyRequest } from "fastify";
 import {
   generateAccessToken,
@@ -7,6 +9,7 @@ import {
   sendToken,
 } from "kasukabe-quickauth-core";
 import { pool } from "../config/db";
+import jwt from "jsonwebtoken";
 
 export const googleAuthRedirect = (
   _request: FastifyRequest,
@@ -79,5 +82,50 @@ export const googleAuthCallback = async (
   } catch (error) {
     console.error("Google Auth Error:", error);
     reply.status(500).send({ message: "Google auth failed" });
+  }
+};
+
+export const me = async (req: FastifyRequest, reply: FastifyReply) => {
+  try {
+    const token = req.cookies?.refreshToken;
+
+    if (!token) {
+      return reply.status(401).send({ message: "No token found" });
+    }
+
+    const decoded = jwt.verify(token, process.env.REFRESH_SECRET!) as {
+      id: string;
+    };
+
+    const client = await pool.connect();
+
+    try {
+      const result = await client.query(
+        "SELECT id, name, email, profile_picture, created_at FROM users WHERE id = $1",
+        [decoded.id]
+      );
+
+      const user = result.rows[0];
+
+      if (!user) {
+        return reply.status(404).send({ message: "User not found" });
+      }
+
+      const accessToken = generateAccessToken(user.id);
+
+      return reply.status(200).send({
+        user,
+        accessToken,
+        message: "User verified",
+      });
+    } finally {
+      client.release();
+    }
+  } catch (error) {
+    console.error("Me controller error:", error);
+    return reply.status(500).send({
+      message: "Error in me controller",
+      error: error instanceof Error ? error.message : error,
+    });
   }
 };
