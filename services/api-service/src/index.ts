@@ -17,7 +17,25 @@ const server = Fastify({
 
 const start = async () => {
   try {
-    await server.register(cors, { origin: "*" });
+    await server.register(cors, {
+      origin: (origin, callback) => {
+        const allowedOrigins = [
+          "http://localhost:5173",
+          "http://127.0.0.1:5173",
+          "http://localhost:3000",
+          process.env.CLIENT_URL,
+        ].filter(Boolean);
+
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.includes(origin)) {
+          return callback(null, true);
+        }
+
+        return callback(new Error("Not allowed by CORS"), false);
+      },
+      credentials: true,
+    });
 
     await server.register(rateLimit, {
       max: 100,

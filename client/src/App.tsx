@@ -7,7 +7,7 @@ import { CompanyCard } from "./components/CompanyCard";
 import axios from "axios";
 
 function App() {
-  const API_BASE = "https://opensource-jobs-platform-prod.onrender.com";
+  const API_BASE = "http://localhost:8000";
 
   const [companies, setCompanies] = useState<Company[]>([]);
   const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(new Set());
