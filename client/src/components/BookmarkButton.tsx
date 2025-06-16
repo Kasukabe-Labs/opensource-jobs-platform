@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 
 export const BookmarkButton = ({
   companyId,
@@ -43,6 +44,10 @@ export const BookmarkButton = ({
       }
     } catch (err) {
       console.error("Bookmark error:", err);
+      // Show login dialog if user is not authenticated
+      if (axios.isAxiosError(err) && err.response?.status === 401) {
+        onToggle(companyId, false); // This will trigger login dialog in parent
+      }
     } finally {
       setLoading(false);
     }
@@ -51,11 +56,21 @@ export const BookmarkButton = ({
   return (
     <button
       onClick={toggleBookmark}
-      className={`ml-auto px-2 py-1 rounded-full text-sm ${
-        bookmarked ? "bg-yellow-300 text-black" : "bg-gray-200 text-gray-700"
-      }`}
+      disabled={loading}
+      className={`ml-auto p-2 rounded-full transition-all duration-200 ${
+        bookmarked
+          ? "bg-yellow-100 text-yellow-600 hover:bg-yellow-200"
+          : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+      } ${loading ? "opacity-50 cursor-not-allowed" : "hover:scale-110"}`}
+      title={bookmarked ? "Remove bookmark" : "Add bookmark"}
     >
-      {bookmarked ? "★ Bookmarked" : "☆ Bookmark"}
+      {loading ? (
+        <div className="w-5 h-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+      ) : (
+        <span className="text-lg text-yellow-600">
+          {bookmarked ? <FaBookmark /> : <FaRegBookmark />}
+        </span>
+      )}
     </button>
   );
 };

@@ -10,6 +10,6 @@ export async function bookmarkRoutes(app: FastifyInstance) {
   app.addHook("preHandler", authMiddleware);
 
   app.post("/bookmarks", addBookmark);
-  app.delete("/bookmarks/:companyId", removeBookmark);
   app.get("/bookmarks", getBookmarks);
+  app.delete("/bookmarks/:companyId", removeBookmark);
 }

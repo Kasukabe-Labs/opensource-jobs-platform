@@ -4,10 +4,14 @@ import type { SearchFilters } from "./types/SearchFIlters";
 import { useDebounce } from "./hooks/useDebouce";
 import { SearchBar } from "./components/SearchBar";
 import { CompanyCard } from "./components/CompanyCard";
+import { BookmarksPage } from "./components/BookmarksPage";
+import { LoginDialog } from "./components/LoginDialog";
+import { useAuth } from "./hooks/useAuth";
 import axios from "axios";
 
 function App() {
-  const API_BASE = "http://localhost:8000";
+  const API_BASE = import.meta.env.VITE_API_URL;
+  const [currentPage, setCurrentPage] = useState<"home" | "bookmarks">("home");
 
   const [companies, setCompanies] = useState<Company[]>([]);
   const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(new Set());
@@ -19,21 +23,29 @@ function App() {
     search: "",
     location: "",
   });
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
 
+  const { user, loading: authLoading, checkAuth } = useAuth();
   const debouncedSearch = useDebounce(filters.search, 300);
 
   const fetchBookmarks = async () => {
+    if (!user) return;
     try {
       const res = await axios.get(`${API_BASE}/bookmarks`, {
         withCredentials: true,
       });
-      setBookmarkedIds(new Set(res.data.bookmarkedCompanyIds)); // expecting: string[]
+      setBookmarkedIds(new Set(res.data.bookmarkedCompanyIds));
     } catch (error) {
       console.error("Failed to fetch bookmarks", error);
     }
   };
 
   const handleBookmarkToggle = (id: string, state: boolean) => {
+    if (!user) {
+      setShowLoginDialog(true);
+      return;
+    }
+
     setBookmarkedIds((prev) => {
       const updated = new Set(prev);
       state ? updated.add(id) : updated.delete(id);
@@ -95,8 +107,14 @@ function App() {
   useEffect(() => {
     fetchCompanies(true);
     fetchLocations();
-    fetchBookmarks();
+    checkAuth();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchBookmarks();
+    }
+  }, [user]);
 
   const observer = useRef<IntersectionObserver | null>(null);
   const lastCompanyRef = useCallback(
@@ -144,12 +162,50 @@ function App() {
       : `${companies.length} companies`;
   }, [filters, companies.length]);
 
+  if (currentPage === "bookmarks") {
+    return (
+      <BookmarksPage
+        onBack={() => setCurrentPage("home")}
+        user={user}
+        onLoginRequired={() => setShowLoginDialog(true)}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-zinc-100 p-6 font-sans text-zinc-800">
       <div className="max-w-3xl mx-auto space-y-6 mt-12">
-        <h1 className="text-3xl font-bold text-center mb-4">
-          Remote OSS Companies Finder
-        </h1>
+        <div className="flex flex-wrap space-y-4 md:space-y-0 justify-between items-center">
+          <h1 className="text-3xl font-bold">Remote OSS Companies Finder</h1>
+          <div className="flex items-center gap-4">
+            {user && (
+              <button
+                onClick={() => setCurrentPage("bookmarks")}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              >
+                <span>📚</span>
+                My Bookmarks
+              </button>
+            )}
+            {user ? (
+              <div className="flex items-center gap-2">
+                <img
+                  src={user.profile_picture}
+                  alt={user.name}
+                  className="w-8 h-8 rounded-full"
+                />
+                <span className="text-sm">{user.name}</span>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowLoginDialog(true)}
+                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+              >
+                Login
+              </button>
+            )}
+          </div>
+        </div>
 
         <SearchBar
           onSearchChange={handleSearchChange}
@@ -199,6 +255,12 @@ function App() {
           </div>
         )}
       </div>
+
+      <LoginDialog
+        isOpen={showLoginDialog}
+        onClose={() => setShowLoginDialog(false)}
+        apiUrl={API_BASE}
+      />
     </div>
   );
 }
