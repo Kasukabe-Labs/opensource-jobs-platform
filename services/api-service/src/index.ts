@@ -39,16 +39,21 @@ const start = async () => {
     await server.register(callbackRoute);
     await server.register(bookmarkRoutes);
 
-    server.printRoutes();
-    // Base route
     server.get("/", async (request, reply) => {
       reply.send({ message: "base route working..." });
     });
 
     const PORT = process.env.PORT || 8001;
 
-    await server.listen({ port: Number(PORT), host: "0.0.0.0" });
+    await server.listen({
+      port: Number(PORT),
+      host: "localhost",
+    });
+
     server.log.info(`Server is running on port ${PORT}`);
+    server.log.info(
+      `Access via: http://localhost:${PORT} or http://127.0.0.1:${PORT}`
+    );
   } catch (err) {
     server.log.error(err);
     process.exit(1);
