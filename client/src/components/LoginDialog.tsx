@@ -1,3 +1,12 @@
+import { Button } from "./ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "./ui/dialog";
+import { Label } from "./ui/label";
+
 interface LoginDialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -12,27 +21,24 @@ export const LoginDialog = ({ isOpen, onClose, apiUrl }: LoginDialogProps) => {
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl transform transition-all"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="text-center">
-          <div className="text-6xl mb-4">🔐</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            Login Required
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Please login to start bookmarking companies you're interested in.
-          </p>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-md w-full">
+        <div className="text-center space-y-4">
+          <div className="text-6xl">🔐</div>
 
-          <div className="space-y-3">
-            <button
+          <DialogTitle className="text-2xl font-bold block">
+            Login Required
+          </DialogTitle>
+
+          <DialogDescription className="text-sm opacity-70 block">
+            Please login to start bookmarking companies you're interested in.
+          </DialogDescription>
+
+          <div className="space-y-3 mt-6">
+            <Button
+              variant="outline"
+              className="w-full flex items-center justify-center gap-3"
               onClick={handleLogin}
-              className="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all font-medium"
             >
               <svg width="20" height="20" viewBox="0 0 24 24">
                 <path
@@ -53,17 +59,18 @@ export const LoginDialog = ({ isOpen, onClose, apiUrl }: LoginDialogProps) => {
                 />
               </svg>
               Continue with Google
-            </button>
+            </Button>
 
-            <button
+            <Button
+              variant="ghost"
+              className="w-full text-muted-foreground"
               onClick={onClose}
-              className="w-full px-6 py-3 text-gray-500 hover:text-gray-700 transition-colors"
             >
               Maybe later
-            </button>
+            </Button>
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };

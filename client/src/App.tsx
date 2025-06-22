@@ -8,6 +8,10 @@ import { BookmarksPage } from "./components/BookmarksPage";
 import { LoginDialog } from "./components/LoginDialog";
 import { useAuth } from "./hooks/useAuth";
 import axios from "axios";
+import { Button } from "./components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "./components/ui/avatar";
+import { Label } from "./components/ui/label";
+import { Skeleton } from "./components/ui/skeleton";
 
 function App() {
   const API_BASE = import.meta.env.VITE_API_URL;
@@ -173,40 +177,32 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-100 p-6 font-sans text-zinc-800">
+    <div className="min-h-screen p-6">
       <div className="max-w-3xl mx-auto space-y-6 mt-12">
         <div className="flex flex-wrap space-y-4 md:space-y-0 justify-between items-center">
-          <h1 className="text-3xl font-bold">Remote OSS Companies Finder</h1>
+          <Label className="text-3xl font-bold">
+            Remote OSS Companies Finder
+          </Label>
           <div className="flex items-center gap-4">
             {user && (
-              <button
-                onClick={() => setCurrentPage("bookmarks")}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-              >
-                <span>📚</span>
-                My Bookmarks
-              </button>
+              <Button onClick={() => setCurrentPage("bookmarks")}>
+                <span>📚</span> My Bookmarks
+              </Button>
             )}
             {user ? (
               <div className="flex items-center gap-2">
-                <img
-                  src={user.profile_picture}
-                  alt={user.name}
-                  className="w-8 h-8 rounded-full"
-                />
-                <span className="text-sm">{user.name}</span>
+                <Avatar>
+                  <AvatarImage src={user?.profile_picture} />
+                  <AvatarFallback>{user?.name}</AvatarFallback>
+                </Avatar>
               </div>
             ) : (
-              <button
-                onClick={() => setShowLoginDialog(true)}
-                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-              >
-                Login
-              </button>
+              <Button onClick={() => setShowLoginDialog(true)}>Login</Button>
             )}
           </div>
         </div>
 
+        {/* Custom component */}
         <SearchBar
           onSearchChange={handleSearchChange}
           onLocationChange={handleLocationChange}
@@ -214,9 +210,7 @@ function App() {
           locations={locations}
         />
 
-        <div className="mb-4">
-          <p className="text-sm text-gray-600">{resultsInfo}</p>
-        </div>
+        {resultsInfo && <Label className="text-sm block">{resultsInfo}</Label>}
 
         <div className="space-y-6">
           {companies.map((company, index) => (
@@ -232,26 +226,24 @@ function App() {
         </div>
 
         {loading && (
-          <div className="text-center py-8">
-            <div className="inline-flex items-center space-x-2">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
-              <span className="text-gray-500">Loading companies...</span>
-            </div>
+          <div className="flex justify-center py-8">
+            <Skeleton className="h-4 w-4 rounded-full animate-spin" />
+            <Label>Loading companies...</Label>
           </div>
         )}
 
         {!hasMore && companies.length > 0 && (
-          <p className="text-center text-gray-400 py-8">
+          <Label className="block text-center py-8 opacity-50">
             You've reached the end.
-          </p>
+          </Label>
         )}
 
         {!loading && companies.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No companies found</p>
-            <p className="text-gray-400 text-sm mt-2">
+            <Label className="text-lg">No companies found</Label>
+            <Label className="text-sm mt-2 block opacity-70">
               Try adjusting your search or filters
-            </p>
+            </Label>
           </div>
         )}
       </div>

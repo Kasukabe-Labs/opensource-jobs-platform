@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import { FaBookmark, FaRegBookmark } from "react-icons/fa";
+import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
 
 export const BookmarkButton = ({
   companyId,
@@ -54,23 +56,25 @@ export const BookmarkButton = ({
   };
 
   return (
-    <button
+    <Button
       onClick={toggleBookmark}
       disabled={loading}
-      className={`ml-auto p-2 rounded-full transition-all duration-200 ${
-        bookmarked
-          ? "bg-yellow-100 text-yellow-600 hover:bg-yellow-200"
-          : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-      } ${loading ? "opacity-50 cursor-not-allowed" : "hover:scale-110"}`}
+      variant="ghost"
+      size="icon"
+      className={cn(
+        "ml-auto transition-transform",
+        loading ? "opacity-50 cursor-not-allowed" : "hover:scale-110",
+        bookmarked ? "text-yellow-600" : "text-gray-500"
+      )}
       title={bookmarked ? "Remove bookmark" : "Add bookmark"}
     >
       {loading ? (
         <div className="w-5 h-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+      ) : bookmarked ? (
+        <FaBookmark className="text-lg" />
       ) : (
-        <span className="text-lg text-yellow-600">
-          {bookmarked ? <FaBookmark /> : <FaRegBookmark />}
-        </span>
+        <FaRegBookmark className="text-lg" />
       )}
-    </button>
+    </Button>
   );
 };

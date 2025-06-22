@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Button } from "./ui/button";
+import { Label } from "./ui/label";
+import { Card, CardContent } from "./ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 interface Bookmark {
   id: string;
@@ -62,82 +66,92 @@ export const BookmarksPage = ({
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-zinc-100 p-6 font-sans text-zinc-800">
+    <div className="min-h-screen p-6">
       <div className="max-w-3xl mx-auto space-y-6 mt-12">
-        <div className="flex flex-wrap space-y-4 md:space-y-0 items-center gap-4">
-          <button
-            onClick={onBack}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
-          >
+        {/* Header */}
+        <div className="flex flex-wrap md:flex-nowrap items-center gap-4">
+          <Button variant="secondary" onClick={onBack}>
             ← Back to Search
-          </button>
-          <h1 className="text-3xl font-bold">My Bookmarks</h1>
+          </Button>
+          <Label className="text-3xl font-bold">My Bookmarks</Label>
         </div>
 
+        {/* Content */}
         {loading ? (
-          <div className="text-center py-12">Loading bookmarks...</div>
+          <div className="text-center py-12">
+            <Label>Loading bookmarks...</Label>
+          </div>
         ) : bookmarks.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">📚</div>
-            <p className="text-gray-500 text-lg">No bookmarks yet</p>
+            <Label className="text-lg opacity-60">No bookmarks yet</Label>
           </div>
         ) : (
           <div className="space-y-6">
             {bookmarks.map((company) => (
-              <div
-                key={company.id}
-                className="flex gap-4 items-start bg-white p-4 rounded-2xl shadow-sm hover:shadow-md transition"
-              >
-                <a
-                  href={company.websiteurl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-shrink-0"
-                >
-                  <img
-                    src={company.logourl}
-                    alt={company.companyname}
-                    className="w-16 h-16 object-contain rounded-lg bg-gray-50"
-                    onError={(e) => {
-                      e.currentTarget.src = "data:image/svg+xml;base64,..."; // placeholder fallback
-                    }}
-                  />
-                </a>
+              <Card key={company.id} className="hover:shadow-md transition">
+                <CardContent className="flex gap-4 items-start p-4">
+                  {/* Logo */}
+                  <a
+                    href={company.websiteurl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-shrink-0"
+                  >
+                    <Avatar className="w-16 h-16 rounded-lg">
+                      <AvatarImage
+                        src={company.logourl}
+                        alt={company.companyname}
+                        onError={(e) => {
+                          e.currentTarget.src = "data:image/svg+xml;base64,..."; // Your fallback
+                        }}
+                        className="object-contain"
+                      />
+                      <AvatarFallback>
+                        {company.companyname?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </a>
 
-                <div className="flex flex-col flex-grow">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h2 className="text-lg font-semibold">
-                        {company.companyname}
-                      </h2>
-                      <p className="text-sm text-gray-600">
-                        {company.location}
-                      </p>
-                      <p className="text-sm mt-1 line-clamp-3">
-                        {company.description}
-                      </p>
-                      <p className="text-xs text-gray-400 mt-2">
-                        Joined:{" "}
-                        {new Date(company.created_at).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => removeBookmark(company.id)}
-                      className="ml-4 p-2 text-red-500 hover:bg-red-100 rounded-full"
-                      title="Remove bookmark"
-                    >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
+                  {/* Info */}
+                  <div className="flex flex-col flex-grow">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <Label className="text-lg font-semibold block">
+                          {company.companyname}
+                        </Label>
+                        <Label className="text-sm block opacity-70">
+                          {company.location}
+                        </Label>
+                        <Label className="text-sm mt-1 block line-clamp-3">
+                          {company.description}
+                        </Label>
+                        <Label className="text-xs mt-2 block opacity-50">
+                          Joined:{" "}
+                          {new Date(company.created_at).toLocaleDateString()}
+                        </Label>
+                      </div>
+
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        title="Remove bookmark"
+                        onClick={() => removeBookmark(company.id)}
+                        className="text-destructive ml-4"
                       >
-                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-                      </svg>
-                    </button>
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                        >
+                          <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                        </svg>
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
         )}

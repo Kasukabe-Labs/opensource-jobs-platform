@@ -6,3 +6,4 @@
 /services/scraper-service/node_modules
 /services/scraper-service/dist
 /services/scraper-service/.env
+/client/node_modules
