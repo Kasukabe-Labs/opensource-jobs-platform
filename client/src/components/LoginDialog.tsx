@@ -5,7 +5,6 @@ import {
   DialogDescription,
   DialogTitle,
 } from "./ui/dialog";
-import { Label } from "./ui/label";
 
 interface LoginDialogProps {
   isOpen: boolean;
